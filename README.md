@@ -3,6 +3,8 @@
 ### Group 1, AY 2020/21
 
 Members of this group:
+| Group 1  |
+| ------------- |
 | Barone Francesco Pio |
 | Lorenzo |
 | Nagaro G.| 
