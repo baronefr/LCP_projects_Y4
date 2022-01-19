@@ -40,7 +40,6 @@ def plot_hits(hit_list, title = None, note = None, focus_area = False,
         color_list = ['tomato', 'orange', 'gold', 'springgreen', 'turquoise',
                       'dodgerblue', 'navy', 'mediumpurple','violet', 'hotpink',
                       'lightcoral','peru','olivedrab','indigo','magenta']
-        
     
     wires = []
     tiles = []
