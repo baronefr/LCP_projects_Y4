@@ -2,34 +2,44 @@
 ## Final project for Laboratory of Computational Physics, mod A
 ### Group 1, AY 2020/21
 
+# **Implementation and optimization of the mean-timer technique in drift tube detectors**
+##### Laboratory of Computational Physics project
+##### AY 2021/2022 University of Padua
+
 Members of this group:
 | Group 1  |
 | ------------- |
 | Barone Francesco Pio |
-| Lorenzo |
-| Nagaro G.| 
+| Valenti Lorenzo |
+| Nagaro Gianmarco | 
 | Ninni Daniele |
 
 
 ## TODO
 
 - [x] initialize project on VM
-- [ ] part 0
-- [ ] part 1
-- [ ] part 2
+- [x] part 1
+- [x] part 2
+- [x] part 3
+- [ ] exam 20 gen 2022
 
 ## file structure
 
 ```bash
-├── bak
+├── bak    (backup folder)
 ├── doc
 │   ├── NOTE2007_0034.pdf
 │   └── project_assignment.ipynb     (the assignment of this project)
 ├── img   (for images)
 └── tmp   (for temporary files)
-```
 
-The **project files** are `project_partX.ipynb`. Files like `playground_*.ipynb` are notebooks for personal use of each student. 
+ + part_1_data_selection.ipynb       (project)
+ + part_2_meantimers.ipynb
+ + part_3_meantimers.ipynb
+ 
+ + run_262.ipynb                     (appendice)
+ + run_333.ipynb
+```
 
 
 <details><summary>project informations</summary>
@@ -45,12 +55,6 @@ Each branch is named after the group of students a given project is assigned to.
 The groups compositions are listed [here](https://docs.google.com/spreadsheets/d/1u1WuXA8fawn73KVtnbTuEZekwOFmCO7cSuUoayZHq9s/)
 
 Students are supposed to work together to produce a short report on the assigned task. The preferred format for the latter is a jupyter notebook, with the proper description, the code implemented for the purpose and the actual results (plots, tables, etc.). The notebook has to be delivered with all the cells executed and should live in a GitHib repository. There is no need to make a pull request to the central repository.
-
-### computing Resources
-
-A Virtual Machine within [CloudVeneto](http://cloudveneto.it/) can be created for each group. Note that, by default, they are not. For some projects though, large datasets are needed, in those cases a VM has been (are being) created to store those files. Refer to ClouldInstructions.md for the steps to take in order to use those resources.
-
-Alternatively, students can use [colab](https://colab.research.google.com/) (for which though no instructions are provided here).
     
 </p>
 </details>

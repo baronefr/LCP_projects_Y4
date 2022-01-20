@@ -1,3 +1,11 @@
+##       LCP module A, Physics of Data
+##      AY 2021/22, University of Padua
+##
+##  code by Barone Francesco Pio
+##  19 gen 2022, on Linux x64 Jupyter
+
+
+# requirements
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,6 +13,18 @@ import matplotlib.patches as ptc
 import matplotlib.colors as mc
 import math
 from scipy import stats
+
+
+
+#####  !    import this file as   ####################
+# from bin.plotters import plot_event_from_dataframe
+# from bin.plotters import plot_event                  <- only if you work with low-level algorithm
+
+
+###################
+###   builders    #
+###################
+
 
 def plot_hits(hit_list, title = None, note = None, focus_area = False,
               legend_primer = '"[{:03d}] {:.2f}ns ({:+.2f})".format(hit_id,time,time-first_time)', 
@@ -40,9 +60,8 @@ def plot_hits(hit_list, title = None, note = None, focus_area = False,
         color_list = ['tomato', 'orange', 'gold', 'springgreen', 'turquoise',
                       'dodgerblue', 'navy', 'mediumpurple','violet', 'hotpink',
                       'lightcoral','peru','olivedrab','indigo','magenta']
-    
-    wires = []
-    tiles = []
+        
+    wires = [];  tiles = [];
     for jj in range(n_layers):
         row = [];
         for ii in range(n_tiles):
@@ -163,7 +182,12 @@ def plot_positions( hits_list, position_list, unsolved = False, hit_size = 18,
 
 
 
-## import these:
+
+###################
+###   external    #
+###################
+
+
 
 
 def plot_event(dic, key = None, time_sorting = True, **kwargs):
@@ -199,6 +223,9 @@ def plot_event(dic, key = None, time_sorting = True, **kwargs):
         return 0
 
 
+
+    
+    
 
 def plot_event_from_dataframe(df, index = None, key=None, debug =  False, **kwargs):
     

@@ -1,3 +1,11 @@
+##       LCP module A, Physics of Data
+##      AY 2021/22, University of Padua
+##
+##  code by Ninni Daniele
+##  19 gen 2022, on Linux x64 Jupyter
+
+
+# requirements
 import numpy as np
 import pandas as pd
 import pandas as pd
@@ -7,11 +15,17 @@ import matplotlib.patches as ptc
 import matplotlib.colors as mc
 import math
 from scipy import stats
-# load the dataset containing the events
-#source_file = '/home/lab/dat/262_000_definitive.txt'
-#events = pd.read_csv(source_file, sep=",")
-#events['LAYERS'] = events['LAYERS'].astype(str)
-#events
+
+
+#  Note: the function to read the data from can be found in bin/data_preprocessing.py
+
+
+
+###########
+### angle #
+###########
+
+
 # define the function that computes the crossing angle
 #         ti : time recorded by the i-th layer's cell
 #         tj : time recorded by the (i+2)-th layer's cell
@@ -19,125 +33,132 @@ from scipy import stats
 #          h : height of each cell
 # angle_sign : sign of the crossing angle (deduced by applying the mean-timer technique)
 def crossing_angle(ti, tj, v_drift, h, angle_sign):
+    
     dx = np.abs(v_drift * (ti-tj))   # projection of the distance between the two hits along the direction of the layers
     angle_tan = dx / (2*h)   # tangent of the crossing angle
     angle = angle_sign * np.rad2deg(np.arctan(angle_tan))
+    
     return angle
 
-# define the functions that apply the mean-timer technique to the single event
-#       t : list of times recorded by the cells hit by the particle
-#       c : list of indices of the cells hit by the particle
+
+
+################
+### meantimers #
+################
+
+
+# define the functions that apply the mean-timer technique to the dataset containing the events
 #    tmax : maximum drift time
 # v_drift : drift velocity
 #       h : height of each cell
-def meantimer_123(t, c, tmax, v_drift, h):   # case layers 1-2-3
-    t1, t2, t3, t4 = t
-    c1, c2, c3, c4 = c
-    t0 = (t1 + 2*t2 + t3 - 2*tmax) / 4   # time pedestal
-    if c2 == c1:
-        pattern = 'LRL_'
-        angle_sign = np.sign(t1-t3)   
-    else:
-        pattern = 'RLR_'
-        angle_sign = np.sign(t3-t1)
-    angle = crossing_angle(t1, t3, v_drift, h, angle_sign)
-    return t0, pattern, angle
+def meantimer_123(dataframe, tmax, v_drift, h):   # case layers 1-2-3
+    
+    df = dataframe.copy()
+    t1, t2, t3 = df['L1_TIME'], df['L2_TIME'], df['L3_TIME']
+    c1, c2, c3 = df['L1_CELL'], df['L2_CELL'], df['L3_CELL']
+    
+    df['PEDESTAL'] = (t1 + 2*t2 + t3 - 2*tmax) / 4
+    
+    mask = (c2 == c1)
+    
+    df.loc[mask, 'PATTERN'] = 'LRL_'
+    df.loc[mask, 'ANGLE'] = crossing_angle(t1, t3, v_drift, h, np.sign(t1-t3))
+    
+    df.loc[~mask, 'PATTERN'] = 'RLR_'
+    df.loc[~mask, 'ANGLE'] = crossing_angle(t1, t3, v_drift, h, np.sign(t3-t1))
+    
+    return df
 
-def meantimer_124(t, c, tmax, v_drift, h):   # case layers 1-2-4
-    t1, t2, t3, t4 = t
-    c1, c2, c3, c4 = c
-    t0 = (2*t1 + 3*t2 - t4 -2*tmax) / 4   # time pedestal
-    if c2 == c1:
-        pattern = 'LR_R'
-        angle_sign = np.sign(t4-t2)   
-    else:
-        pattern = 'RL_L'
-        angle_sign = np.sign(t2-t4)  
-    angle = crossing_angle(t2, t4, v_drift, h, angle_sign)
-    return t0, pattern, angle
+def meantimer_124(dataframe, tmax, v_drift, h):   # case layers 1-2-4
+    
+    df = dataframe.copy()
+    t1, t2, t4 = df['L1_TIME'], df['L2_TIME'], df['L4_TIME']
+    c1, c2, c4 = df['L1_CELL'], df['L2_CELL'], df['L4_CELL']
+    
+    df['PEDESTAL'] = (2*t1 + 3*t2 - t4 -2*tmax) / 4
+    
+    mask = (c2 == c1)
+    
+    df.loc[mask, 'PATTERN'] = 'LR_R'
+    df.loc[mask, 'ANGLE'] = crossing_angle(t2, t4, v_drift, h, np.sign(t4-t2))
+    
+    df.loc[~mask, 'PATTERN'] = 'RL_L'
+    df.loc[~mask, 'ANGLE'] = crossing_angle(t2, t4, v_drift, h, np.sign(t2-t4))
+    
+    return df
 
-def meantimer_134(t, c, tmax, v_drift, h):   # case layers 1-3-4
-    t1, t2, t3, t4 = t
-    c1, c2, c3, c4 = c
-    t0 = (-t1 + 3*t3 + 2*t4 -2*tmax) / 4   # time pedestal
-    if c4 == c1:
-        pattern = 'L_LR'
-        angle_sign = np.sign(t1-t3)
-    else:
-        pattern = 'R_RL'
-        angle_sign = np.sign(t3-t1)
-    angle = crossing_angle(t1, t3, v_drift, h, angle_sign)
-    return t0, pattern, angle
+def meantimer_134(dataframe, tmax, v_drift, h):   # case layers 1-3-4
+    
+    df = dataframe.copy()
+    t1, t3, t4 = df['L1_TIME'], df['L3_TIME'], df['L4_TIME']
+    c1, c3, c4 = df['L1_CELL'], df['L3_CELL'], df['L4_CELL']
+    
+    df['PEDESTAL'] = (-t1 + 3*t3 + 2*t4 -2*tmax) / 4
+    
+    mask = (c4 == c1)
+    
+    df.loc[mask, 'PATTERN'] = 'L_LR'
+    df.loc[mask, 'ANGLE'] = crossing_angle(t1, t3, v_drift, h, np.sign(t1-t3))
+    
+    df.loc[~mask, 'PATTERN'] = 'R_RL'
+    df.loc[~mask, 'ANGLE'] = crossing_angle(t1, t3, v_drift, h, np.sign(t3-t1))
+    
+    return df
 
-def meantimer_234(t, c, tmax, v_drift, h):   # case layers 2-3-4
-    t1, t2, t3, t4 = t
-    c1, c2, c3, c4 = c
-    t0 = (t2 + 2*t3 + t4 -2*tmax) / 4   # time pedestal
-    if c3 == c2:
-        pattern = '_RLR'
-        angle_sign = np.sign(t4-t2)
-    else:
-        pattern = '_LRL'
-        angle_sign = np.sign(t2-t4)
-    angle = crossing_angle(t2, t4, v_drift, h, angle_sign)
-    return t0, pattern, angle
+def meantimer_234(dataframe, tmax, v_drift, h):   # case layers 2-3-4
     
-def meantimer_1234(t, c, tmax, v_drift, h):   # case layers 1-2-3-4
-    t0_123, pattern_123, angle_123 = meantimer_123(t, c, tmax, v_drift, h)
-    t0_124, pattern_124, angle_124 = meantimer_124(t, c, tmax, v_drift, h)
-    t0_134, pattern_134, angle_134 = meantimer_134(t, c, tmax, v_drift, h)
-    t0_234, pattern_234, angle_234 = meantimer_234(t, c, tmax, v_drift, h)
+    df = dataframe.copy()
+    t2, t3, t4 = df['L2_TIME'], df['L3_TIME'], df['L4_TIME']
+    c2, c3, c4 = df['L2_CELL'], df['L3_CELL'], df['L4_CELL']
     
-    pedestals, angles = [], []   # lists of plausible time pedestals and crossing angles
-    pattern = ''
-    sampling = 25   # sampling period of the acquisition system (ns)
+    df['PEDESTAL'] = (t2 + 2*t3 + t4 -2*tmax) / 4
     
-    if np.abs(t0_123-t0_124) < sampling:
-        pedestals += [t0_123, t0_124]
-        angles += [angle_123, angle_124]
-        if pattern == '':
-            pattern = pattern_123[:-1] + pattern_124[-1]
+    mask = (c3 == c2)
     
-    if np.abs(t0_123-t0_134) < sampling:
-        pedestals += [t0_123, t0_134]
-        angles += [angle_123, angle_134]
-        if pattern == '':
-            pattern = pattern_123[:-1] + pattern_134[-1]
+    df.loc[mask, 'PATTERN'] = '_RLR'
+    df.loc[mask, 'ANGLE'] = crossing_angle(t2, t4, v_drift, h, np.sign(t4-t2))
     
-    if np.abs(t0_123-t0_234) < sampling:
-        pedestals += [t0_123, t0_234]
-        angles += [angle_123, angle_234]
-        if pattern == '':
-            pattern = pattern_123[:-1] + pattern_234[-1]
+    df.loc[~mask, 'PATTERN'] = '_LRL'
+    df.loc[~mask, 'ANGLE'] = crossing_angle(t2, t4, v_drift, h, np.sign(t2-t4))
     
-    if np.abs(t0_124-t0_134) < sampling:
-        pedestals += [t0_124, t0_134]
-        angles += [angle_124, angle_134]
-        if pattern == '':
-            pattern = pattern_124[:2] + pattern_134[2:]
+    return df
+ 
+def meantimer_1234(dataframe, tmax, v_drift, h):   # case layers 1-2-3-4
     
-    if np.abs(t0_124-t0_234) < sampling:
-        pedestals += [t0_124, t0_234]
-        angles += [angle_124, angle_234]
-        if pattern == '':
-            pattern = pattern_124[:2] + pattern_234[2:]
+    df = dataframe.copy()
+    t1, t2, t3, t4 = df['L1_TIME'], df['L2_TIME'], df['L3_TIME'], df['L4_TIME']
+    c1, c2, c3, c4 = df['L1_CELL'], df['L2_CELL'], df['L3_CELL'], df['L4_CELL']
     
-    if np.abs(t0_134-t0_234) < sampling:
-        pedestals += [t0_134, t0_234]
-        angles += [angle_134, angle_234]
-        if pattern == '':
-            pattern = pattern_134[0] + pattern_234[1:]
+    df['PEDESTAL'] = (t1 + 3*t2 + 3*t3 + t4 - 4*tmax) / 8
     
-    if len(pedestals) == 0:
-        return 0, 'FAIL', 0
-    else:
-        t0, angle = np.mean(pedestals), np.mean(angles)
-        return t0, pattern, angle
-                                                                              
-### end test
+    mask = (c4 == c1)
+    angles_tol = 5   # tolerance (deg) on the differences between [crossing angles computed using layers 1-3] and [crossing angles computed using layers 2-4]
+    
+    df.loc[mask, 'PATTERN'] = 'LRLR'
+    angles_13 = crossing_angle(t1, t3, v_drift, h, np.sign(t1-t3))
+    angles_24 = crossing_angle(t2, t4, v_drift, h, np.sign(t4-t2))
+    d_angles = np.abs(angles_13 - angles_24)
+    angles_mask = (d_angles < angles_tol)
+    df.loc[mask & angles_mask, 'ANGLE'] = ((angles_13 + angles_24) / 2)
+    df.loc[mask & ~angles_mask, 'ANGLE'] = 'FAIL'
+    
+    df.loc[~mask, 'PATTERN'] = 'RLRL'
+    angles_13 = crossing_angle(t1, t3, v_drift, h, np.sign(t3-t1))
+    angles_24 = crossing_angle(t2, t4, v_drift, h, np.sign(t2-t4))
+    d_angles = np.abs(angles_13 - angles_24)
+    angles_mask = (d_angles < angles_tol)
+    df.loc[~mask & angles_mask, 'ANGLE'] = ((angles_13 + angles_24) / 2)
+    df.loc[~mask & ~angles_mask, 'ANGLE'] = 'FAIL'
 
-# define the function that applies the mean-timer technique to the dataset containing the events
+    return df
+
+
+################################
+### general meantimer function #
+################################
+    
 def meantimer(dataframe):
+    
     df = dataframe.copy()
     
     # dictionary used to select the appropriate function
@@ -159,19 +180,21 @@ def meantimer(dataframe):
     v_drift = L / (2*tmax)   # drift velocity (mm/ns)
     
     # apply the mean-timer functions to the dataset
-    df[['PEDESTAL', 'PATTERN', 'ANGLE']] = df.apply(lambda row: meantimers[row['LAYERS']](row[['L1_TIME', 'L2_TIME', 'L3_TIME', 'L4_TIME']],
-                                                                                          row[['L1_CELL', 'L2_CELL', 'L3_CELL', 'L4_CELL']],
-                                                                                          tmax, v_drift, h), axis=1, result_type="expand")
+    df['PEDESTAL'] = pd.Series(dtype='float')
+    df['PATTERN'] = pd.Series(dtype='str')
+    df['ANGLE'] = pd.Series(dtype='float')
     
-    df = df[df['PATTERN'] != 'FAIL']
+    for i in meantimers:
+        mask = (df['LAYERS'] == i)
+        df[mask] = (meantimers[i])(df[mask], tmax, v_drift, h)
+        
+    df = df[df['ANGLE'] != 'FAIL']   # reject 4-hits events for which it is not possible to compute the crossing angle properly
     
     for i in range(1, 5):
-        df['L'+str(i)+'_DRIFT'] = np.abs(df['L'+str(i)+'_TIME'] - df['PEDESTAL'])
-        df = df[(df['L'+str(i)+'_DRIFT'] < tmax) | (np.isnan(df['L'+str(i)+'_DRIFT']))]   # reject events with drift times >= 'tmax'
+        df['L'+str(i)+'_DRIFT'] = df['L'+str(i)+'_TIME'] - df['PEDESTAL']
+        df = df[((df['L'+str(i)+'_DRIFT'] < tmax) & (df['L'+str(i)+'_DRIFT'] > 0)) | (np.isnan(df['L'+str(i)+'_DRIFT']))]   # reject events with drift times >= 'tmax' or <= 0
         df['L'+str(i)+'_X'] = v_drift * df['L'+str(i)+'_DRIFT'] * (df['PATTERN'].str[i-1]).replace(LR_to_sign)
     
     df = df.reset_index(drop=True)
+    
     return df
-
-events = meantimer(events)
-events
