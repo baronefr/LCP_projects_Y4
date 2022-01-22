@@ -17,7 +17,7 @@ Members of this group:
 - [x] part 1
 - [x] part 2
 - [x] part 3
-- [ ] exam 20 gen 2022
+- [x] exam 20 gen 2022
 
 ## file structure
 
