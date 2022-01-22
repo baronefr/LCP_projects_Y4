@@ -1,9 +1,5 @@
-# Implementation and optimization of the mean-timer technique in drift tube detectors
-## Final project for Laboratory of Computational Physics, mod A
-### Group 1, AY 2020/21
-
 # **Implementation and optimization of the mean-timer technique in drift tube detectors**
-##### Laboratory of Computational Physics project
+##### Laboratory of Computational Physics (mod. A) project
 ##### AY 2021/2022 University of Padua
 
 Members of this group:
