@@ -22,7 +22,7 @@ Members of this group:
 ## file structure
 
 ```bash
-├── bak    (backup folder)
+├── bin    (python collections of useful functions)
 ├── doc
 │   ├── NOTE2007_0034.pdf
 │   └── project_assignment.ipynb     (the assignment of this project)
