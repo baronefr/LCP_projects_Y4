@@ -1,6 +1,7 @@
+<h5 align="center">Lab of Computational Physics (module A) project</h5>
+<h5 align="center">AY 2021/2022 University of Padua</h5>
+
 # **Implementation and optimization of the mean-timer technique in drift tube detectors**
-##### Laboratory of Computational Physics (mod. A) project
-##### AY 2021/2022 University of Padua
 
 Members of this group:
 | Group 1  |
@@ -38,10 +39,10 @@ Members of this group:
 ```
 
 
-<details><summary>project informations</summary>
+<details><summary>generic final project info</summary>
 <p>
 
-## project informations
+## about final projects
 
 In each of the branches of this repo you find all the necessary to complete your final project.
 In particular the file Project.ipynb describes the projects and provides guidance to its development.
@@ -54,3 +55,14 @@ Students are supposed to work together to produce a short report on the assigned
     
 </p>
 </details>
+
+
+***
+
+<h6 align="center">repository by Francesco Pio Barone</h6>
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/62724611/166108149-7629a341-bbca-4a3e-8195-67f469a0cc08.png" alt="" height="70"/>
+  &emsp;
+  <img src="https://user-images.githubusercontent.com/62724611/166108076-98afe0b7-802c-4970-a2d5-bbb997da759c.png" alt="" height="70"/>
+</p>
