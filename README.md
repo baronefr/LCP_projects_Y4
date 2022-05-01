@@ -11,7 +11,6 @@ Members of this group:
 | Nagaro Gianmarco | 
 | Ninni Daniele |
 
-
 ## TODO
 
 - [x] initialize project on VM
